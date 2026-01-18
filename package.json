@@ -1,0 +1,32 @@
+{
+  "name": "pintrack",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "set NEXT_TEST_NATIVE_DIR=node_modules\\@next\\swc-win32-x64-msvc&& next dev --webpack",
+    "build": "set NEXT_TEST_NATIVE_DIR=node_modules\\@next\\swc-win32-x64-msvc&& next build",
+    "start": "next start",
+    "lint": "eslint"
+  },
+  "dependencies": {
+    "next": "16.0.4",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "@next/swc-win32-x64-msvc": "16.0.4",
+    "@next/swc": "16.0.4"
+  },
+  "overrides": {
+    "@next/swc": "16.0.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.0.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

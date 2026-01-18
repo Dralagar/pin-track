@@ -1,0 +1,84 @@
+{
+  "products": [
+    {
+      "id": "d32be6ab-0128-4105-8164-e972f086885b",
+      "sku": "X",
+      "name": "X",
+      "unitPrice": 50,
+      "commissionPerUnit": 2,
+      "active": true
+    },
+    {
+      "id": "efe51a62-3718-49ea-baee-6c28d24bdf84",
+      "sku": "X1",
+      "name": "X1",
+      "unitPrice": 100,
+      "commissionPerUnit": 3,
+      "active": true
+    },
+    {
+      "id": "a0b56ab5-8cc9-4bd2-893d-dc63280202b5",
+      "sku": "X2",
+      "name": "X2",
+      "unitPrice": 150,
+      "commissionPerUnit": 4,
+      "active": true
+    },
+    {
+      "id": "8b5a4b6b-bd4e-4fef-8dd9-1f096f4c4938",
+      "sku": "X3",
+      "name": "X3",
+      "unitPrice": 200,
+      "commissionPerUnit": 5,
+      "active": true
+    },
+    {
+      "id": "ecb578a9-8188-4cab-a57e-b8fbe3437ead",
+      "sku": "X4",
+      "name": "X4",
+      "unitPrice": 300,
+      "commissionPerUnit": 6,
+      "active": true
+    }
+  ],
+  "salespeople": [
+    {
+      "id": "fa220c46-2ad3-4c91-b30a-f58e0e0db372",
+      "name": "Jeff",
+      "active": true,
+      "role": "SALESPERSON"
+    },
+    {
+      "id": "3a75c819-1be4-4149-ab8f-5cef563247d1",
+      "name": "Collo",
+      "active": true,
+      "role": "SALESPERSON"
+    },
+    {
+      "id": "edu-night-shift-id",
+      "name": "Edu",
+      "active": true,
+      "role": "NIGHT_SHIFT",
+      "nightPickTime": "23:00"
+    },
+    {
+      "id": "bunny-boss-id",
+      "name": "Bunny",
+      "active": true,
+      "role": "BOSS"
+    }
+  ],
+  "pins": [
+    {
+      "id": "45c037bc-2bc1-4108-8c71-c24dcf302440",
+      "createdAt": "2026-01-17T06:57:03.553Z",
+      "salespersonId": "fa220c46-2ad3-4c91-b30a-f58e0e0db372",
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 1,
+      "unitPrice": 50,
+      "total": 50,
+      "paymentType": "MPESA",
+      "status": "PENDING"
+    }
+  ]
+}

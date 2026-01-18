@@ -1,0 +1,45 @@
+import { MetadataRoute } from "next";
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "PinTrack",
+    short_name: "PinTrack",
+    description: "Track pins, sales, stock, and reconciliation",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#0f172a",
+    theme_color: "#10b981",
+    orientation: "portrait-primary",
+    icons: [
+      {
+        src: "/icon-192.png",
+        sizes: "192x192",
+        type: "image/png",
+        purpose: "maskable",
+      },
+      {
+        src: "/icon-512.png",
+        sizes: "512x512",
+        type: "image/png",
+        purpose: "maskable",
+      },
+    ],
+    categories: ["business", "productivity"],
+    shortcuts: [
+      {
+        name: "New Pin",
+        short_name: "New Pin",
+        description: "Create a new pin entry",
+        url: "/pins/new",
+        icons: [{ src: "/icon-192.png", sizes: "192x192" }],
+      },
+      {
+        name: "Dashboard",
+        short_name: "Dashboard",
+        description: "View dashboard",
+        url: "/",
+        icons: [{ src: "/icon-192.png", sizes: "192x192" }],
+      },
+    ],
+  };
+}
