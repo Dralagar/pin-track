@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
 import { AuthSession, User } from './types';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'pintrack2025';
+const JWT_SECRET = process.env.JWT_SECRET || 'pintrac';
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 export async function hashPassword(password: string): Promise<string> {

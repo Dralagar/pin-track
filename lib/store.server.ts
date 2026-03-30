@@ -157,7 +157,7 @@ async function ensureDbExists(): Promise<void> {
   }
 }
 
-async function readDb(): Promise<DbData> {
+export async function readDb(): Promise<DbData> {
   await ensureDbExists();
   const raw = await readFile(getDbPath(), "utf8");
   const parsed = JSON.parse(raw) as DbData;
@@ -168,7 +168,7 @@ async function readDb(): Promise<DbData> {
   return normalized;
 }
 
-async function writeDb(next: DbData): Promise<void> {
+export async function writeDb(next: DbData): Promise<void> {
   const dbPath = getDbPath();
   const tmpPath = `${dbPath}.tmp`;
   await writeFile(tmpPath, JSON.stringify(next, null, 2), "utf8");
