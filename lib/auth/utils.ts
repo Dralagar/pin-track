@@ -1,19 +1,10 @@
 // lib/auth/utils.ts
-import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers';
-import { AuthSession, User } from './types';
+import type { AuthSession, User } from './types';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'pintrac';
+const JWT_SECRET = process.env.JWT_SECRET || 'pintrack-secret-key-change-in-production';
 const SESSION_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
-
-export async function hashPassword(password: string): Promise<string> {
-  return await bcrypt.hash(password, 10);
-}
-
-export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  return await bcrypt.compare(password, hash);
-}
 
 export function generateToken(user: User): string {
   const session: AuthSession = {
