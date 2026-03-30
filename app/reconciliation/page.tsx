@@ -30,7 +30,10 @@ export default async function ReconciliationPage() {
             >
               New pin
             </Link>
-            <Link href="/" className="rounded-full border border-white/20 px-5 py-2 text-sm hover:border-white/40">
+            <Link 
+              href="/dashboard" 
+              className="rounded-full border border-white/20 px-5 py-2 text-sm hover:border-white/40 transition-colors hover:bg-white/5"
+            >
               Dashboard
             </Link>
           </div>

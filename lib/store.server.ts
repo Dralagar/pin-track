@@ -40,11 +40,11 @@ function seedDb(): DbData {
   ];
 
   const salespeople: Salesperson[] = [
-    { id: randomUUID(), name: "Jeff", active: true, role: "SALESPERSON" },
-    { id: randomUUID(), name: "Collo", active: true, role: "SALESPERSON" },
-    { id: randomUUID(), name: "Edu", active: true, role: "NIGHT_SHIFT", nightPickTime: "23:00" },
-    { id: randomUUID(), name: "Bunny", active: true, role: "BOSS" },
-  ];  
+    { id: randomUUID(), name: "Jeff", active: true, role: "SALESPERSON", pin: "5678" },
+    { id: randomUUID(), name: "Collo", active: true, role: "SALESPERSON", pin: "5679" },
+    { id: randomUUID(), name: "Edu", active: true, role: "NIGHT_SHIFT", nightPickTime: "23:00", pin: "5680" },
+    { id: randomUUID(), name: "Bunny", active: true, role: "BOSS", pin: "1234" },
+  ];
 
   const warehouseStock: WarehouseStockItem[] = products.map((p) => ({ 
     productId: p.id, 
@@ -61,7 +61,14 @@ function seedDb(): DbData {
       const warehouseItem = warehouseStock.find((x) => x.productId === p.id)!;
       const allocQty = Math.min(10, warehouseItem.qty);
       warehouseItem.qty -= allocQty;
-      salespersonStock.push({ salespersonId: s.id, productId: p.id, qty: allocQty });
+      salespersonStock.push({ 
+        salespersonId: s.id, 
+        productId: p.id, 
+        qty: allocQty,
+        totalGiven: 0,
+        totalReceivedToday: 0,
+        batches: []
+      });
     }
   }
 
@@ -84,9 +91,14 @@ function normalizeDb(db: any): DbData {
   if (!Array.isArray((next as any).stockRequests)) (next as any).stockRequests = [];
   if (!Array.isArray((next as any).waitlist)) (next as any).waitlist = [];
 
-  // Ensure role field exists
+  // Ensure role and pin fields exist for salespeople
   for (const s of next.salespeople ?? []) {
     if (!s.role) s.role = "SALESPERSON";
+    // Add default pin for existing users if missing
+    if (!s.pin) {
+      // Generate a simple pin based on name (for backwards compatibility)
+      s.pin = String(s.name.length * 1111).slice(0, 4);
+    }
   }
 
   for (const p of next.products ?? []) {
@@ -121,7 +133,7 @@ function normalizeDb(db: any): DbData {
           salespersonId: s.id, 
           productId: p.id, 
           qty: allocQty,
-          totalGiven: allocQty,
+          totalGiven: 0,
           totalReceivedToday: allocQty,
           batches: []
         });
@@ -221,6 +233,18 @@ export async function createPin(input: CreatePinInput): Promise<Pin> {
   }
   if (stockItem) {
     stockItem.qty -= qty;
+    stockItem.totalGiven = (stockItem.totalGiven ?? 0) + qty;
+    
+    // Track batch
+    const timestamp = new Date().toISOString();
+    const batchId = randomUUID();
+    if (!stockItem.batches) stockItem.batches = [];
+    stockItem.batches.push({ 
+      batchId, 
+      qty: -qty, 
+      timestamp, 
+      notes: `Pin sale: ${qty} units` 
+    });
   }
 
   const pin: Pin = {
@@ -301,7 +325,7 @@ export async function resolveProductLabel(id: string): Promise<string> {
 function upsertWarehouseStockItem(db: DbData, productId: string): WarehouseStockItem {
   let item = db.warehouseStock.find((x) => x.productId === productId);
   if (!item) {
-    item = { productId, qty: 0 };
+    item = { productId, qty: 0, totalGiven: 0, totalRestocked: 0, batches: [] };
     db.warehouseStock.push(item);
   }
   return item;
@@ -310,7 +334,7 @@ function upsertWarehouseStockItem(db: DbData, productId: string): WarehouseStock
 function upsertSalespersonStockItem(db: DbData, salespersonId: string, productId: string): SalespersonStockItem {
   let item = db.salespersonStock.find((x) => x.salespersonId === salespersonId && x.productId === productId);
   if (!item) {
-    item = { salespersonId, productId, qty: 0 };
+    item = { salespersonId, productId, qty: 0, totalGiven: 0, totalReceivedToday: 0, batches: [] };
     db.salespersonStock.push(item);
   }
   return item;
@@ -354,9 +378,19 @@ export async function allocateStock(input: AllocateStockInput) {
     throw new Error(`Insufficient warehouse stock. Available: ${warehouse.qty}`);
   }
 
+  const timestamp = new Date().toISOString();
+  const batchId = randomUUID();
+
   warehouse.qty -= qty;
+  warehouse.totalGiven = (warehouse.totalGiven ?? 0) + qty;
+  if (!warehouse.batches) warehouse.batches = [];
+  warehouse.batches.push({ batchId, qty: -qty, timestamp, notes: `Allocated to ${salesperson.name}` });
+
   const spStock = upsertSalespersonStockItem(db, salesperson.id, product.id);
   spStock.qty += qty;
+  spStock.totalReceivedToday = (spStock.totalReceivedToday ?? 0) + qty;
+  if (!spStock.batches) spStock.batches = [];
+  spStock.batches.push({ batchId, qty, timestamp, notes: `Allocated from warehouse` });
 
   await writeDb(db);
   return { warehouse, spStock };
@@ -427,7 +461,7 @@ export async function fulfillStockRequest(requestId: string) {
   warehouse.qty -= req.qty;
   warehouse.totalGiven = (warehouse.totalGiven ?? 0) + req.qty;
   if (!warehouse.batches) warehouse.batches = [];
-  warehouse.batches.push({ batchId, qty: req.qty, timestamp, notes: `Fulfilled request for ${salesperson?.name ?? "Unknown"}` });
+  warehouse.batches.push({ batchId, qty: -req.qty, timestamp, notes: `Fulfilled request for ${salesperson?.name ?? "Unknown"}` });
 
   // Track salesperson stock received
   const spStock = upsertSalespersonStockItem(db, req.salespersonId, req.productId);
@@ -503,10 +537,39 @@ export async function getSalespersonProfile(salespersonId: string) {
     .filter((p) => p.paymentType === "CREDIT")
     .reduce((sum, p) => sum + p.total, 0);
 
+  // Calculate stock received today
+  const stockReceivedToday = stockAllocations.reduce((sum, stock) => {
+    return sum + (stock.totalReceivedToday ?? 0);
+  }, 0);
+
+  // Get items sold by product
+  const itemsSoldByProduct = new Map<string, { productId: string; productName: string; qty: number; revenue: number }>();
+  for (const pin of pins) {
+    const product = db.products.find((p) => p.id === pin.productId);
+    if (!product) continue;
+    
+    const existing = itemsSoldByProduct.get(pin.productId);
+    if (existing) {
+      existing.qty += pin.qty;
+      existing.revenue += pin.total;
+    } else {
+      itemsSoldByProduct.set(pin.productId, {
+        productId: pin.productId,
+        productName: `${product.sku} - ${product.name}`,
+        qty: pin.qty,
+        revenue: pin.total,
+      });
+    }
+  }
+
   const recentPins = pins
     .slice()
     .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
-    .slice(0, 10);
+    .slice(0, 10)
+    .map(pin => ({
+      ...pin,
+      productName: db.products.find(p => p.id === pin.productId)?.name || pin.productId,
+    }));
 
   return {
     salesperson,
@@ -515,9 +578,15 @@ export async function getSalespersonProfile(salespersonId: string) {
     totalPins: pins.length,
     totalRevenue,
     commissionEarned,
+    commissionOwed: commissionEarned,
     creditOutstanding,
-    stockAllocations,
+    stockAllocations: stockAllocations.map(stock => ({
+      ...stock,
+      productName: db.products.find(p => p.id === stock.productId)?.name || stock.productId,
+    })),
     recentPins,
+    itemsSoldByProduct: Array.from(itemsSoldByProduct.values()),
+    stockReceivedToday,
   };
 }
 

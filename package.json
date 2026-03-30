@@ -4,23 +4,25 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "set NEXT_TEST_NATIVE_DIR=node_modules\\@next\\swc-win32-x64-msvc&& next dev --webpack",
-    "build": "set NEXT_TEST_NATIVE_DIR=node_modules\\@next\\swc-win32-x64-msvc&& next build",
+    "dev": "next dev",
+    "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie": "^1.1.1",
+    "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^1.7.0",
     "next": "16.0.4",
     "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "@next/swc-win32-x64-msvc": "16.0.4",
-    "@next/swc": "16.0.4"
-  },
-  "overrides": {
-    "@next/swc": "16.0.4"
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cookie": "^0.6.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

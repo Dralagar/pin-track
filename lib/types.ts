@@ -1,3 +1,4 @@
+// lib/types.ts
 export type PaymentType = "MPESA" | "CASH" | "CREDIT";
 
 export type PinStatus = "PENDING" | "CONFIRMED" | "CANCELED";
@@ -19,6 +20,8 @@ export type Product = {
 export type Salesperson = {
   id: string;
   name: string;
+  email?: string;           // Added for authentication
+  pin?: string;             // Added for PIN-based login
   active: boolean;
   role?: "BOSS" | "SALESPERSON" | "NIGHT_SHIFT";
   nightPickTime?: "23:00" | "00:00"; // 11 PM or 12 AM (midnight)

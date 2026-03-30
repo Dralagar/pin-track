@@ -80,5 +80,96 @@
       "paymentType": "MPESA",
       "status": "PENDING"
     }
+  ],
+  "warehouseStock": [
+    {
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 0,
+      "totalGiven": 0,
+      "totalRestocked": 10,
+      "batches": [
+        {
+          "batchId": "6d0690d7-3885-4277-8ce2-cd64f24174e3",
+          "qty": 10,
+          "timestamp": "2026-01-20T20:47:34.751Z"
+        }
+      ]
+    },
+    {
+      "productId": "efe51a62-3718-49ea-baee-6c28d24bdf84",
+      "qty": 0,
+      "totalGiven": 0,
+      "totalRestocked": 0,
+      "batches": []
+    },
+    {
+      "productId": "a0b56ab5-8cc9-4bd2-893d-dc63280202b5",
+      "qty": 0,
+      "totalGiven": 0,
+      "totalRestocked": 0,
+      "batches": []
+    },
+    {
+      "productId": "8b5a4b6b-bd4e-4fef-8dd9-1f096f4c4938",
+      "qty": 0,
+      "totalGiven": 0,
+      "totalRestocked": 0,
+      "batches": []
+    },
+    {
+      "productId": "ecb578a9-8188-4cab-a57e-b8fbe3437ead",
+      "qty": 0,
+      "totalGiven": 0,
+      "totalRestocked": 0,
+      "batches": []
+    }
+  ],
+  "salespersonStock": [
+    {
+      "salespersonId": "fa220c46-2ad3-4c91-b30a-f58e0e0db372",
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 5,
+      "totalGiven": 5,
+      "totalReceivedToday": 5,
+      "batches": []
+    },
+    {
+      "salespersonId": "3a75c819-1be4-4149-ab8f-5cef563247d1",
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 5,
+      "totalGiven": 5,
+      "totalReceivedToday": 5,
+      "batches": []
+    }
+  ],
+  "stockRequests": [
+    {
+      "id": "bf0a60b2-cd80-4dfe-8755-108423bce0bf",
+      "createdAt": "2026-01-20T10:53:52.910Z",
+      "salespersonId": "fa220c46-2ad3-4c91-b30a-f58e0e0db372",
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 10,
+      "status": "OPEN"
+    },
+    {
+      "id": "be91a4dd-034e-4fd6-aa0c-977778af6e91",
+      "createdAt": "2026-03-30T21:50:13.772Z",
+      "salespersonId": "3a75c819-1be4-4149-ab8f-5cef563247d1",
+      "productId": "d32be6ab-0128-4105-8164-e972f086885b",
+      "qty": 10,
+      "status": "OPEN"
+    }
+  ],
+  "waitlist": [
+    {
+      "id": "410da3de-cb9e-45f3-8ba3-4029fc7eb998",
+      "createdAt": "2026-01-20T10:55:01.767Z",
+      "productId": "efe51a62-3718-49ea-baee-6c28d24bdf84",
+      "customerName": "Teba",
+      "customerPhone": "0706255611",
+      "qty": 1,
+      "status": "WAITING",
+      "notes": "Deliver at Bee Centre"
+    }
   ]
 }

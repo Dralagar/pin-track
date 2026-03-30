@@ -116,6 +116,8 @@ export default function InventoryClient({ initial }: Props) {
       salesperson: bySalesperson.get(row.salespersonId) ?? "Unknown",
       product: byProduct.get(row.productId),
       qty: row.qty,
+      totalGiven: row.totalGiven ?? 0,
+      batches: row.batches ?? [],
     }));
 
   const openRequests = data.stockRequests
